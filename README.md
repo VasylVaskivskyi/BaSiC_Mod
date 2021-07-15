@@ -8,7 +8,7 @@ https://github.com/marrlab/BaSiC
 
 ### Installation
 
-1. Copy jars from `dependencies` folder into fiji `jars` folder.
+1. Copy jars from `dependencies` folder (or `jars` folder in the repo) into fiji `jars` folder.
 2. Copy `BaSiC_Mod.jar` into fiji `plugins` folder.
 
 
