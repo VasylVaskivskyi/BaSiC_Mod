@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: junit.jar jplasma.jar csparsej.jar jtransforms.jar netlib-ja
+ va.jar arpack-combo.jar optimization.jar parallelcolt-0.9.4.jar ij.jar
+

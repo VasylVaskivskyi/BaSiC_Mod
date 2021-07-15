@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact name="BaSiC_Mod:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BaSiC_Mod_jar</output-path>
+    <root id="root">
+      <element id="archive" name="BaSiC_Mod.jar">
+        <element id="module-output" name="BaSiC_Mod" />
+      </element>
+      <element id="file-copy" path="$PROJECT_DIR$/jars/junit.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/jplasma.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/csparsej.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/jtransforms.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/netlib-java.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/arpack-combo.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/optimization.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/jars/parallelcolt-0.9.4.jar" />
+      <element id="file-copy" path="$PROJECT_DIR$/../../fiji/Fiji.app/jars/ij-1.53c.jar" />
+    </root>
+  </artifact>
+</component>
