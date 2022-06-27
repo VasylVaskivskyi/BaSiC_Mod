@@ -36,7 +36,10 @@ import java.awt.Font;
 import java.awt.TextField;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EmptyStackException;
+import java.util.List;
 
 
 public class BaSiC_Mod implements PlugIn {
@@ -79,6 +82,8 @@ public class BaSiC_Mod implements PlugIn {
         gd.addMessage("");
         gd.addStringField("Output_dir: ", "", 45);
         gd.addMessage("");
+        gd.addStringField("Output_suffix: ", "", 45);
+        gd.addMessage("");
         gd.addMessage("Copyright © 2016 Tingying Peng, Helmholtz Zentrum München and TUM, Germany. All rights reserved.");
         //TextField flat_lambda = (TextField)gd.getNumericFields().get(0);
         //TextField dark_lambda = (TextField)gd.getNumericFields().get(1);
@@ -90,13 +95,68 @@ public class BaSiC_Mod implements PlugIn {
             this.processDialog(gd);
         }
     }
+    List<String>  processImgPaths(String imgPathsStr)
+    {
+        String[] pathSplit = imgPathsStr.split("\\s*,\\s*");
+        List<String> imgPathsSplit = new ArrayList<String>(Arrays.asList(pathSplit));
+        List<String> imgPaths = new ArrayList<String>();
+
+        if (imgPathsSplit.isEmpty()){
+            IJ.error("Provided input path is empty");
+        }
+        else{
+            for (String path : imgPathsSplit)
+                if (path.length() != 0)
+                {
+                    imgPaths.add(path);
+                }
+        }
+        return imgPaths;
+    }
+
+    ImagePlus readImgPathsToStack(List<String> imgPaths)
+    {
+        ImagePlus firstImage = IJ.openImage(imgPaths.get(0));
+        int imgWidth = firstImage.getWidth();
+        int imgHeight = firstImage.getHeight();
+        ImageStack imgStack = new ImageStack(imgWidth, imgHeight);
+
+        if (imgPaths.size() == 1){
+            if (firstImage.getBitDepth() == 24) {
+                IJ.error("Please decompose RGB images into single channels.");
+            } else {
+                this.noOfSlices = firstImage.getNSlices();
+                if (this.noOfSlices == 1)
+                {
+                    IJ.error("Input must be an image stack, not a single image");
+                }
+            }
+            if (firstImage.isStack() || firstImage.isHyperStack()){
+                firstImage.setTitle("img");
+                return firstImage;
+            }
+            else{IJ.error("Only one image provided, bit it is not a stack");}
+        }
+        else{
+            for (String imgPath : imgPaths){
+                ImagePlus imp = IJ.openImage(imgPath);
+                imgStack.addSlice(imp.getProcessor());
+            }
+        }
+        return new ImagePlus("img", imgStack);
+    }
 
     void processDialog(GenericDialog gd) {
         String stackPath = gd.getNextString();
         String flatPath = gd.getNextString();
         String darkPath = gd.getNextString();
         String outDir = gd.getNextString();
-        ImagePlus imp = IJ.openImage(stackPath);
+        String outSuffix = gd.getNextString();
+
+        List<String> imgPaths = processImgPaths(stackPath);
+        ImagePlus imp = readImgPathsToStack(imgPaths);
+
+        //ImagePlus imp = IJ.openImage(stackPath);
         ImagePlus imp_flat = null;
         ImagePlus imp_dark = null;
 
@@ -107,16 +167,6 @@ public class BaSiC_Mod implements PlugIn {
         String myCorrectionChoice = gd.getNextRadioButton();
         double lambda_flat = gd.getNextNumber();
         double lambda_dark = gd.getNextNumber();
-
-        if (imp.getBitDepth() == 24) {
-            IJ.error("Please decompose RGB images into single channels.");
-        } else {
-            this.noOfSlices = imp.getNSlices();
-            if (this.noOfSlices == 1)
-            {
-                IJ.error("Input must be an image stack, not a single image");
-            }
-        }
 
         if (myShadingEstimationChoice.equals(shadingEstimationOptions[0]))
         {
@@ -136,7 +186,7 @@ public class BaSiC_Mod implements PlugIn {
                 myShadingEstimationChoice, myShadingModelChoice, myParameterChoice,
                 lambda_flat, lambda_dark,
                 myDriftChoice, myCorrectionChoice,
-                outDir);
+                outDir, outSuffix);
 
     }
 
@@ -144,12 +194,12 @@ public class BaSiC_Mod implements PlugIn {
                      String myShadingEstimationChoice, String myShadingModelChoice, String myParameterChoice,
                      double lambda_flat, double lambda_dark,
                      String myDriftChoice, String myCorrectionChoice,
-                     String outDir)
+                     String outDir, String outSuffix)
     {
         this.stack = imp.getStack();
         int outputWidth = this.stack.getWidth();
         int outputHeight = this.stack.getHeight();
-        String title = imp.getTitle();
+        String title = imp.getTitle().concat(outSuffix);
         BaSiC_Mod.Options myOptions = new BaSiC_Mod.Options();
         if (myShadingEstimationChoice.equals(shadingEstimationOptions[1])) {
             myOptions.shadingEst = true;

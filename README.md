@@ -19,6 +19,7 @@ run("BaSiC Mod",
     " flat-field_image_path=[]" +
     " dark-field_image_path=[]" +
     " output_dir={out_dir}" +
+    " output_suffix=_img_name" +
     " shading_estimation=[Estimate shading profiles]" +
     " shading_model=[Estimate flat-field only (ignore dark-field)]" +
     " setting_regularisation_parameters=Automatic" +
@@ -30,3 +31,19 @@ run("BaSiC Mod",
 run("Quit");
 eval("script", "System.exit(0);");
 ```    
+
+`input_stack` accepts either an image stack 
+e.g. `input_stack=C:\\img\\dir\\ImageStack.tif`
+or a comma separated list of image paths,
+ e.g. `input_stack='C:\\img\\dir\\1_00001_Z007_CH1.tif,C:\\img\\dir\\1_00002_Z007_CH1.tif'`
+ 
+Depeding on the parameters the output is saved into the following directories:
+```
+out_dir
+ |-- corrected
+ |    `-- corrected_img_name.tif
+ |-- flatfield
+ |    `-- flatfield_img_name.tif
+ `-- darkfield
+     `-- darkfield_img_name.tif
+```
