@@ -117,16 +117,13 @@ public class BaSiC_Mod implements PlugIn {
     ImagePlus readImgPathsToStack(List<String> imgPaths)
     {
         ImagePlus firstImage = IJ.openImage(imgPaths.get(0));
-        int imgWidth = firstImage.getWidth();
-        int imgHeight = firstImage.getHeight();
-        ImageStack imgStack = new ImageStack(imgWidth, imgHeight);
+        ImageStack imgStack = firstImage.createEmptyStack();
 
         if (imgPaths.size() == 1){
             if (firstImage.getBitDepth() == 24) {
                 IJ.error("Please decompose RGB images into single channels.");
             } else {
-                this.noOfSlices = firstImage.getNSlices();
-                if (this.noOfSlices == 1)
+                if (firstImage.getNSlices() == 1)
                 {
                     IJ.error("Input must be an image stack, not a single image");
                 }
@@ -138,6 +135,7 @@ public class BaSiC_Mod implements PlugIn {
             else{IJ.error("Only one image provided, bit it is not a stack");}
         }
         else{
+            firstImage.close();
             for (String imgPath : imgPaths){
                 ImagePlus imp = IJ.openImage(imgPath);
                 imgStack.addSlice(imp.getProcessor());
@@ -168,6 +166,7 @@ public class BaSiC_Mod implements PlugIn {
         double lambda_flat = gd.getNextNumber();
         double lambda_dark = gd.getNextNumber();
 
+        this.noOfSlices = imp.getNSlices();
         if (myShadingEstimationChoice.equals(shadingEstimationOptions[0]))
         {
             imp_flat = IJ.openImage(flatPath);
